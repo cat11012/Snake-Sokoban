@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Snake-Sokoban"
+    "\\python",
+    "\\python\\setting",
+    "\\python\\setting\\images"
   ],
-  "SelectedNode": "\\Snake-Sokoban\\main.py",
+  "SelectedNode": "\\python\\setting\\images\\background.py",
   "PreviewInSolutionExplorer": false
 }
