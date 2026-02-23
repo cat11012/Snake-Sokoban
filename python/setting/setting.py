@@ -1,5 +1,7 @@
 import pygame
 
+from python.utility.convert_tools import surface_size_ratio
+
 pygame.init()
 
 screen_info = pygame.display.Info()
@@ -9,6 +11,8 @@ MAX_SCREEN_HEIGHT = screen_info.current_h
 
 MIN_SCREEN_WIDTH = 10
 MIN_SCREEN_HEIGHT = 10
+
+SCREEN_SIZE_RATIO = surface_size_ratio(MAX_SCREEN_WIDTH, MAX_SCREEN_HEIGHT)
 
 screen_width = MAX_SCREEN_WIDTH/2
 screen_height = MAX_SCREEN_HEIGHT/2

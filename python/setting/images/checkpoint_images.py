@@ -2,7 +2,7 @@ import os
 import sys
 import pygame
 
-from ..setting import *
+from python.setting.setting import *
 
 checkpoint_images_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'images', 'checkpoints', 'check_points')
 
