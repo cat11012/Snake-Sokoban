@@ -83,8 +83,25 @@ orig_square_button_images = {
     'clicked':  pygame.image.load(os.path.join(buttons_images_path, 'square_button_clicked.png'))   .convert_alpha()
 }
 
-level_button_template_image = {
+level_button_template_images = {
     'normal':   pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'square_button_normal.png'))  .convert_alpha(), (SCREEN_HEIGHT/6, SCREEN_HEIGHT/6)),
     'hovered':  pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'square_button_hovered.png')) .convert_alpha(), (SCREEN_HEIGHT/6, SCREEN_HEIGHT/6)),
     'clicked':  pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'square_button_clicked.png')) .convert_alpha(), (SCREEN_HEIGHT/6, SCREEN_HEIGHT/6))
 }
+level_button_rects = (
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*8.5, top = SCREEN_HEIGHT/10),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*14.5, top = SCREEN_HEIGHT/10),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*20.5, top = SCREEN_HEIGHT/10),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*26.5, top = SCREEN_HEIGHT/10),
+
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*8.5, centery = SCREEN_HEIGHT/2),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*14.5, centery = SCREEN_HEIGHT/2),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*20.5, centery = SCREEN_HEIGHT/2),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*26.5, centery = SCREEN_HEIGHT/2),
+
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*8.5, bottom = SCREEN_HEIGHT/10*9),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*14.5, bottom = SCREEN_HEIGHT/10*9),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*20.5, bottom = SCREEN_HEIGHT/10*9),
+    level_button_template_images['normal'].get_rect(centerx = SCREEN_WIDTH/35*26.5, bottom = SCREEN_HEIGHT/10*9),
+)
+
