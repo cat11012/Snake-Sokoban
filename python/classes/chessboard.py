@@ -223,17 +223,26 @@ class Chessboard:
             third_head = self.snake_body[-3]
             tail = self.snake_body[0]
             second_tail = self.snake_body[1]
-            rotate = 15 * (self.moving_process + 5)
+            rotate = 15 * (self.moving_process + 5) 
+            second_head_rotate = second_head.rotate
+            if second_head_rotate == 0: second_head_rotate = 360
+            if second_head.rotate - direct == 90:
+                rotate = direct + 90 - rotate
+            else:
+                rotate = direct - 90 + rotate
 
             logging.debug(f"rotate: {rotate}, moving_process: {self.moving_process}, angle: {angle}, direct: {direct}, flip: {flip}")
 
             if self.moving_process <= 0:
-                if flip:
-                    head.image = pygame.transform.flip(snake_images.snake_half_curly_body, False, True)
-                    head.image = pygame.transform.rotate(head.image, direct)
-                else:
-                    head.image = pygame.transform.rotate(snake_images.snake_half_curly_body, direct)
-                head.image.blit(pygame.transform.rotate(snake_images.snake_head, rotate), head.rect)
+                self.moving_process = 0
+                
+                # if flip:
+                #     head.image = pygame.transform.flip(snake_images.snake_half_curly_body, False, True)
+                #     head.image = pygame.transform.rotate(head.image, head.rotate)
+                # else:
+                #     head.image = pygame.transform.rotate(snake_images.snake_half_curly_body, head.rotate)
+                # head.image.blit(pygame.transform.rotate(snake_images.snake_head_only, rotate), pygame.Rect(0, 0, 64, 64))
+                # logging.debug(f"head image: {head.image}")
                 
             elif self.moving_process <= 11:
                 head.image = pygame.transform.rotate(snake_images.snake_head_entry_process[self.moving_process], direct)
@@ -252,14 +261,16 @@ class Chessboard:
                     if second_tail.rotate == tail.rotate:
                         second_tail.image = pygame.transform.rotate(snake_images.snake_tail_entry_process[self.moving_process], second_tail.rotate)
                     else:
-                        if second_tail.rotate - tail.rotate == 90: # filp
-                            second_tail.image = pygame.transform.rotate(snake_images.snake_curly_tail_entry_process[self.moving_process], (second_tail.rotate + 90) % 360)
+                        previous_block_rotate = tail.rotate 
+                        if previous_block_rotate == 0: previous_block_rotate = 360
+                        if previous_block_rotate-second_tail.rotate == 90:
+                            second_tail.image = pygame.transform.rotate(pygame.transform.flip(snake_images.snake_curly_tail_entry_process[self.moving_process], False, True), second_tail.rotate-270)
                         else:
-                            second_tail.image = pygame.transform.rotate(pygame.transform.flip(snake_images.snake_curly_tail_entry_process[self.moving_process], False, True), (second_tail.rotate - 90) % 360)
-                    if second_tail.block_type == self.BlockTypes.SNAKE_CURLY_BODY:
-                        second_tail.image = pygame.transform.rotate(snake_images.snake_curly_tail_entry_process[self.moving_process], second_tail.rotate)
-                    else:
-                        second_tail.image = pygame.transform.rotate(snake_images.snake_tail_entry_process[self.moving_process], second_tail.rotate)
+                            second_tail.image = pygame.transform.rotate(snake_images.snake_curly_tail_entry_process[self.moving_process], second_tail.rotate-90)
+                    # if second_tail.block_type == self.BlockTypes.SNAKE_CURLY_BODY:
+                    #     second_tail.image = pygame.transform.rotate(snake_images.snake_curly_tail_entry_process[self.moving_process], second_tail.rotate)
+                    # else:
+                    #     second_tail.image = pygame.transform.rotate(snake_images.snake_tail_entry_process[self.moving_process], second_tail.rotate)
             
             else: # 12
                 if self.moving_box != None:
