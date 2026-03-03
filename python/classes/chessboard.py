@@ -220,6 +220,7 @@ class Chessboard:
 
             head = self.snake_body[-1]
             second_head = self.snake_body[-2]
+            third_head = self.snake_body[-3]
             tail = self.snake_body[0]
             second_tail = self.snake_body[1]
             rotate = 15 * (self.moving_process + 5)
@@ -237,10 +238,12 @@ class Chessboard:
             elif self.moving_process <= 11:
                 head.image = pygame.transform.rotate(snake_images.snake_head_entry_process[self.moving_process], direct)
                 if self.snake_move_trun:
-                    if flip: # filp
-                        second_head.image = pygame.transform.rotate(snake_images.snake_curly_body_head_move_out_process[self.moving_process], angle)
+                    previous_block_rotate = third_head.rotate 
+                    if previous_block_rotate == 0: previous_block_rotate = 360
+                    if previous_block_rotate-direct == 90:
+                        second_head.image = pygame.transform.rotate(pygame.transform.flip(snake_images.snake_curly_body_head_move_out_process[self.moving_process], False, True), direct-270)
                     else:
-                        second_head.image = pygame.transform.rotate(pygame.transform.flip(snake_images.snake_curly_body_head_move_out_process[self.moving_process], False, True), angle)
+                        second_head.image = pygame.transform.rotate(snake_images.snake_curly_body_head_move_out_process[self.moving_process], direct-90)
                 else:
                     second_head.image = pygame.transform.rotate(snake_images.snake_head_move_out_process[self.moving_process], direct)
                 
