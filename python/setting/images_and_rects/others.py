@@ -11,10 +11,9 @@ level_complete_image = pygame.transform.smoothscale(
 )
 level_complete_rect = level_complete_image.get_rect(centerx = SCREEN_WIDTH/2, top = SCREEN_HEIGHT / 5)
 
-red_apple_image = pygame.transform.smoothscale(
-    pygame.image.load(os.path.join(path, 'red_apple.png')).convert_alpha(),
-    (SCREEN_HEIGHT/56*3, SCREEN_HEIGHT/56*3)
-)
+red_apple_image = pygame.image.load(os.path.join(path, 'red_apple.png')).convert_alpha()
+    #(SCREEN_HEIGHT/56*3, SCREEN_HEIGHT/56*3)
+
 
 title_image = pygame.transform.smoothscale(
     pygame.image.load(os.path.join(path, 'title.png')).convert_alpha(),
@@ -24,7 +23,7 @@ title_rect = title_image.get_rect(centerx = SCREEN_WIDTH/2, top = SCREEN_HEIGHT 
 
 background_image = pygame.transform.smoothscale(
     pygame.image.load(
-        os.path.join(path, "backgrounds", f'background_{SCREEN_SIZE_RATIO[0]}x{SCREEN_SIZE_RATIO[1]}.png')
+        os.path.join(path, "backgrounds", f'{SCREEN_SIZE_RATIO[0]}x{SCREEN_SIZE_RATIO[1]}.png')
     ).convert_alpha(), (SCREEN_WIDTH, SCREEN_HEIGHT)
 )
 background_rect = background_image.get_rect(topleft = (0, 0))

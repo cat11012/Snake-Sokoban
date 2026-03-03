@@ -9,7 +9,6 @@ class Colors(Enum):
     BRIGHT_ORANGE = "bright_orange"
     BRIGHT_RED = "bright_red"
     BRIGHT_YELLOW = "bright_yellow"
-    BROWN = "brown"
     DARK_BLUE = "dark_blue"
     DARK_GREEN = "dark_green"
     DARK_ORANGE = "dark_orange"
@@ -22,7 +21,7 @@ class Colors(Enum):
 
 class InterfaceStatus(Enum):
     LOADING = "loading"
-    FRONT_PAGE = "front_page"
+    LOBBY = "lobby"
     LEVEL_SELECTION = "level_selection"
     GAMEPLAY = "gameplay"
     LEVEL_COMPLETE = "level_complete"
