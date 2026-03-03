@@ -143,13 +143,13 @@ class Chessboard:
         if self.eat_apple != None:
                     self.image.blit(self.eat_apple.image, self.eat_apple.rect)
 
-        logging.debug("\nmap:")
+        # logging.debug("\nmap:")
         for row in self.map:
             for block in row:
                 self.image.blit(block.image, block.rect)
-                if block.block_type != self.BlockTypes.BLANK:
-                    logging.debug(f"block pos: {block.pos}, type: {block.block_type}, rotate: {block.rotate}, equal snake: {block.image in {snake_images.snake_body, snake_images.snake_curly_body, snake_images.snake_head, snake_images.snake_tail}}")
-        logging.debug("")
+                # if block.block_type != self.BlockTypes.BLANK:
+                    # logging.debug(f"block pos: {block.pos}, type: {block.block_type}, rotate: {block.rotate}, equal snake: {block.image in {snake_images.snake_body, snake_images.snake_curly_body, snake_images.snake_head, snake_images.snake_tail}}")
+        # logging.debug("")
         self.__log_snake_body()
 
         if self.moving_box != None:
@@ -160,10 +160,6 @@ class Chessboard:
             self.moving_process += 1
 
             head = self.snake_body[-1]
-            second_head = self.snake_body[-2]
-            tail = self.snake_body[0]
-            second_tail = self.snake_body[1]
-            rotate = 15 * (self.moving_process + 5)
 
             match self.moving_direction:
                 case self.Direction.UP:
@@ -207,6 +203,27 @@ class Chessboard:
                         angle = 180
                         flip = True
 
+            if self.moving_process == 1:
+                match self.moving_direction:
+                    case self.Direction.UP:
+                        self.map[head.pos[0]][head.pos[1]-1] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0], head.pos[1]-1, self.BlockTypes.UP_SNAKE_HEAD, direct)
+                        self.snake_body.append(self.map[head.pos[0]][head.pos[1]-1])
+                    case self.Direction.DOWN:
+                        self.map[head.pos[0]][head.pos[1]+1] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0], head.pos[1]+1, self.BlockTypes.DOWN_SNAKE_HEAD, direct)
+                        self.snake_body.append(self.map[head.pos[0]][head.pos[1]+1])
+                    case self.Direction.LEFT:
+                        self.map[head.pos[0]-1][head.pos[1]] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0]-1, head.pos[1], self.BlockTypes.LEFT_SNAKE_HEAD, direct)
+                        self.snake_body.append(self.map[head.pos[0]-1][head.pos[1]])
+                    case self.Direction.RIGHT:
+                        self.map[head.pos[0]+1][head.pos[1]] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0]+1, head.pos[1], self.BlockTypes.RIGHT_SNAKE_HEAD, direct)
+                        self.snake_body.append(self.map[head.pos[0]+1][head.pos[1]])
+
+            head = self.snake_body[-1]
+            second_head = self.snake_body[-2]
+            tail = self.snake_body[0]
+            second_tail = self.snake_body[1]
+            rotate = 15 * (self.moving_process + 5)
+
             logging.debug(f"rotate: {rotate}, moving_process: {self.moving_process}, angle: {angle}, direct: {direct}, flip: {flip}")
 
             if self.moving_process <= 0:
@@ -218,21 +235,6 @@ class Chessboard:
                 head.image.blit(pygame.transform.rotate(snake_images.snake_head, rotate), head.rect)
                 
             elif self.moving_process <= 11:
-                if self.moving_process == 1:
-                    match self.moving_direction:
-                        case self.Direction.UP:
-                            self.map[head.pos[0]][head.pos[1]-1] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0], head.pos[1]-1, self.BlockTypes.UP_SNAKE_HEAD, direct)
-                            self.snake_body.append(self.map[head.pos[0]][head.pos[1]-1])
-                        case self.Direction.DOWN:
-                            self.map[head.pos[0]][head.pos[1]+1] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0], head.pos[1]+1, self.BlockTypes.DOWN_SNAKE_HEAD, direct)
-                            self.snake_body.append(self.map[head.pos[0]][head.pos[1]+1])
-                        case self.Direction.LEFT:
-                            self.map[head.pos[0]-1][head.pos[1]] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0]-1, head.pos[1], self.BlockTypes.LEFT_SNAKE_HEAD, direct)
-                            self.snake_body.append(self.map[head.pos[0]-1][head.pos[1]])
-                        case self.Direction.RIGHT:
-                            self.map[head.pos[0]+1][head.pos[1]] = self.Block(pygame.transform.rotate(snake_images.snake_head_entry_process[1], direct), head.pos[0]+1, head.pos[1], self.BlockTypes.RIGHT_SNAKE_HEAD, direct)
-                            self.snake_body.append(self.map[head.pos[0]+1][head.pos[1]])
-
                 head.image = pygame.transform.rotate(snake_images.snake_head_entry_process[self.moving_process], direct)
                 if self.snake_move_trun:
                     if flip: # filp
