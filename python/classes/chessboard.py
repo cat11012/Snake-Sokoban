@@ -286,7 +286,8 @@ class Chessboard:
                 self.snake_body[-2].rotate = self.snake_body[-1].rotate
                 self.snake_body[0].block_type = self.BlockTypes.SNAKE_TAIL
 
-                for block in self.snake_body:
+                for i in range(len(self.snake_body)-1):
+                    block = self.snake_body[i]
                     match block.block_type:
                         case self.BlockTypes.UP_SNAKE_HEAD:
                             block.image = pygame.transform.rotate(snake_images.snake_head, 90)
@@ -299,7 +300,12 @@ class Chessboard:
                         case self.BlockTypes.SNAKE_BODY:
                             block.image = pygame.transform.rotate(snake_images.snake_body, block.rotate)
                         case self.BlockTypes.SNAKE_CURLY_BODY:
-                            block.image = pygame.transform.rotate(snake_images.snake_curly_body, block.rotate-90)
+                            previous_block_rotate = self.snake_body[i-1].rotate # the idx 0 can never be curly body, so i-1 is always valid
+                            if previous_block_rotate == 0: previous_block_rotate = 360
+                            if previous_block_rotate-block.rotate == 90:
+                                block.image = pygame.transform.rotate(pygame.transform.flip(snake_images.snake_curly_body, False, True), block.rotate-270)
+                            else:
+                                block.image = pygame.transform.rotate(snake_images.snake_curly_body, block.rotate-90)
                         case self.BlockTypes.SNAKE_TAIL:
                             block.image = pygame.transform.rotate(snake_images.snake_tail, block.rotate)
 
