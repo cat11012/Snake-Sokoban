@@ -39,12 +39,13 @@ class Chessboard:
         APPLE = 13
 
     class Block:
-        def __init__(self, image: pygame.Surface, x: int, y: int, block_type: 'Chessboard.BlockTypes', rotate: int = 0):
+        def __init__(self, image: pygame.Surface, x: int, y: int, block_type: 'Chessboard.BlockTypes', rotate: int = 0, color: Colors | None = None):
             self.image = image
             self.rect = self.image.get_rect(center = (x*64 + 32, y*64 + 32))
             self.pos = (x, y)
             self.block_type = block_type
             self.rotate = rotate
+            self.color = color
 
     def __init__(self):
         self.image = pygame.Surface((640, 640))
@@ -106,7 +107,7 @@ class Chessboard:
                 continue
             if color not in box_images:
                 continue
-            self.map[x][y] = self.Block(box_images[color], x, y, self.BlockTypes.BOX)
+            self.map[x][y] = self.Block(box_images[color], x, y, self.BlockTypes.BOX, color = color)
             self.checkpoints[color] = []
 
             for _ in range(2):
@@ -116,7 +117,7 @@ class Chessboard:
                     continue
                 if color not in checkpoint_images:
                     continue
-                self.map[x][y] = self.Block(checkpoint_images[color], x, y, self.BlockTypes.CHECKPOINT)
+                self.map[x][y] = self.Block(checkpoint_images[color], x, y, self.BlockTypes.CHECKPOINT, color = color)
                 self.checkpoints[color].append(self.map[x][y])
             
             x = random.randint(0, 9)
@@ -125,7 +126,7 @@ class Chessboard:
                 continue
             if color not in end_point_images:
                 continue
-            self.map[x][y] = self.Block(end_point_images[color], x, y, self.BlockTypes.END_POINT)
+            self.map[x][y] = self.Block(end_point_images[color], x, y, self.BlockTypes.END_POINT, color = color)
             self.checkpoints[color].append(self.map[x][y])
 
     def draw_chessboard(self):
@@ -231,7 +232,7 @@ class Chessboard:
             else:
                 rotate = direct - 90 + rotate
 
-            logging.debug(f"rotate: {rotate}, moving_process: {self.moving_process}, angle: {angle}, direct: {direct}, flip: {flip}")
+            # logging.debug(f"rotate: {rotate}, moving_process: {self.moving_process}, angle: {angle}, direct: {direct}, flip: {flip}")
 
             if self.moving_process <= 0:
                 self.moving_process = 0
@@ -271,10 +272,32 @@ class Chessboard:
                     #     second_tail.image = pygame.transform.rotate(snake_images.snake_curly_tail_entry_process[self.moving_process], second_tail.rotate)
                     # else:
                     #     second_tail.image = pygame.transform.rotate(snake_images.snake_tail_entry_process[self.moving_process], second_tail.rotate)
-            
+
+                if self.moving_box != None:
+                    if self.moving_direction == self.Direction.UP:
+                        self.moving_box.rect.y -= 64 / 12
+                    elif self.moving_direction == self.Direction.DOWN:
+                        self.moving_box.rect.y += 64 / 12
+                    elif self.moving_direction == self.Direction.LEFT:
+                        self.moving_box.rect.x -= 64 / 12
+                    elif self.moving_direction == self.Direction.RIGHT:
+                        self.moving_box.rect.x += 64 / 12
+
             else: # 12
                 if self.moving_box != None:
+                    self.moving_box.rect = self.moving_box.image.get_rect(center = (self.moving_box.pos[0]*64 + 32, self.moving_box.pos[1]*64 + 32))
                     self.map[self.moving_box.pos[0]][self.moving_box.pos[1]] = self.moving_box
+                    for checkpoint in self.checkpoints[self.moving_box.color]:
+                        if checkpoint.block_type == self.BlockTypes.END_POINT and len(self.checkpoints[self.moving_box.color]) > 1:
+                            logging.debug(f"len checkpoints: {len(self.checkpoints[self.moving_box.color])}")
+                            break
+                        if checkpoint.pos == self.moving_box.pos:
+                            self.checkpoints[self.moving_box.color].remove(checkpoint)
+                            if len(self.checkpoints[self.moving_box.color]) == 0:
+                                self.moving_box.image = box_images[Colors.SILVER_GELATIN]
+                                self.moving_box.block_type = self.BlockTypes.UNMOVEABLE
+                                self.moving_box.color = None
+                            break
                 if self.snake_tail_move:
                     self.map[tail.pos[0]][tail.pos[1]] = self.Block(pygame.Surface((0,0)), tail.pos[0], tail.pos[1], self.BlockTypes.BLANK)
                     self.snake_body.pop(0)
@@ -347,11 +370,11 @@ class Chessboard:
         if not self.moving:
             match key:
                 case pygame.K_UP | pygame.K_w:
+                    if self.snake_body[-1].pos[1] == 0:
+                        return
                     if self.snake_body[-1].block_type == self.BlockTypes.DOWN_SNAKE_HEAD:
                         return
                     if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-1].block_type == self.BlockTypes.UNMOVEABLE:
-                        return
-                    if self.snake_body[-1].pos[1] == 0:
                         return
                     if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-1].block_type == self.BlockTypes.APPLE:
                         self.snake_tail_move = False
@@ -360,9 +383,10 @@ class Chessboard:
                     if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-1].block_type == self.BlockTypes.BOX:
                         if self.snake_body[-1].pos[1] == 1:
                             return
-                        if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-2].block_type != self.BlockTypes.BLANK:
+                        if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-2].block_type not in [self.BlockTypes.BLANK, self.BlockTypes.CHECKPOINT, self.BlockTypes.END_POINT]:
                             return
                         self.moving_box = self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-1]
+                        self.moving_box.pos = (self.moving_box.pos[0], self.moving_box.pos[1]-1)
                         self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-1] = self.Block(pygame.Surface((0,0)), self.snake_body[-1].pos[0], self.snake_body[-1].pos[1]-1, self.BlockTypes.BLANK)
                     
                     want_head = self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]-1]
@@ -378,11 +402,11 @@ class Chessboard:
                         self.snake_move_trun = True
 
                 case pygame.K_DOWN | pygame.K_s:
+                    if self.snake_body[-1].pos[1] == len(self.map[0]) - 1:
+                        return
                     if self.snake_body[-1].block_type == self.BlockTypes.UP_SNAKE_HEAD:
                         return
                     if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+1].block_type == self.BlockTypes.UNMOVEABLE:
-                        return
-                    if self.snake_body[-1].pos[1] == len(self.map[0]) - 1:
                         return
                     if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+1].block_type == self.BlockTypes.APPLE:
                         self.snake_tail_move = False
@@ -391,10 +415,11 @@ class Chessboard:
                     if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+1].block_type == self.BlockTypes.BOX:
                         if self.snake_body[-1].pos[1] == len(self.map[0]) - 2:
                             return
-                        if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+2].block_type != self.BlockTypes.BLANK:
+                        if self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+2].block_type not in [self.BlockTypes.BLANK, self.BlockTypes.CHECKPOINT, self.BlockTypes.END_POINT]:
                             return
                         self.moving_box = self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+1]
                         self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+1] = self.Block(pygame.Surface((0,0)), self.snake_body[-1].pos[0], self.snake_body[-1].pos[1]+1, self.BlockTypes.BLANK)
+                        self.moving_box.pos = (self.moving_box.pos[0], self.moving_box.pos[1]+1)
                     
                     want_head = self.map[self.snake_body[-1].pos[0]][self.snake_body[-1].pos[1]+1]
                     if want_head.block_type not in [self.BlockTypes.BLANK, self.BlockTypes.APPLE, self.BlockTypes.BOX, self.BlockTypes.CHECKPOINT, self.BlockTypes.END_POINT]:
@@ -409,11 +434,11 @@ class Chessboard:
                         self.snake_move_trun = True
                     
                 case pygame.K_LEFT | pygame.K_a:
+                    if self.snake_body[-1].pos[0] == 0:
+                        return
                     if self.snake_body[-1].block_type == self.BlockTypes.RIGHT_SNAKE_HEAD:
                         return
                     if self.map[self.snake_body[-1].pos[0]-1][self.snake_body[-1].pos[1]].block_type == self.BlockTypes.UNMOVEABLE:
-                        return
-                    if self.snake_body[-1].pos[0] == 0:
                         return
                     if self.map[self.snake_body[-1].pos[0]-1][self.snake_body[-1].pos[1]].block_type == self.BlockTypes.APPLE:
                         self.snake_tail_move = False
@@ -422,9 +447,10 @@ class Chessboard:
                     if self.map[self.snake_body[-1].pos[0]-1][self.snake_body[-1].pos[1]].block_type == self.BlockTypes.BOX:
                         if self.snake_body[-1].pos[0] == 1:
                             return
-                        if self.map[self.snake_body[-1].pos[0]-2][self.snake_body[-1].pos[1]].block_type != self.BlockTypes.BLANK:
+                        if self.map[self.snake_body[-1].pos[0]-2][self.snake_body[-1].pos[1]].block_type not in [self.BlockTypes.BLANK, self.BlockTypes.CHECKPOINT, self.BlockTypes.END_POINT]:
                             return
                         self.moving_box = self.map[self.snake_body[-1].pos[0]-1][self.snake_body[-1].pos[1]]
+                        self.moving_box.pos = (self.moving_box.pos[0]-1, self.moving_box.pos[1])
                         self.map[self.snake_body[-1].pos[0]-1][self.snake_body[-1].pos[1]] = self.Block(pygame.Surface((0,0)), self.snake_body[-1].pos[0]-1, self.snake_body[-1].pos[1], self.BlockTypes.BLANK)
 
                         want_head = self.map[self.snake_body[-1].pos[0]-1][self.snake_body[-1].pos[1]]
@@ -440,11 +466,11 @@ class Chessboard:
                         self.snake_move_trun = True
 
                 case pygame.K_RIGHT | pygame.K_d:
+                    if self.snake_body[-1].pos[0] == len(self.map) - 1:
+                        return
                     if self.snake_body[-1].block_type == self.BlockTypes.LEFT_SNAKE_HEAD:
                         return
                     if self.map[self.snake_body[-1].pos[0]+1][self.snake_body[-1].pos[1]].block_type == self.BlockTypes.UNMOVEABLE:
-                        return
-                    if self.snake_body[-1].pos[0] == len(self.map) - 1:
                         return
                     if self.map[self.snake_body[-1].pos[0]+1][self.snake_body[-1].pos[1]].block_type == self.BlockTypes.APPLE:
                         self.snake_tail_move = False
@@ -453,9 +479,10 @@ class Chessboard:
                     if self.map[self.snake_body[-1].pos[0]+1][self.snake_body[-1].pos[1]].block_type == self.BlockTypes.BOX:
                         if self.snake_body[-1].pos[0] == len(self.map) - 2:
                             return
-                        if self.map[self.snake_body[-1].pos[0]+2][self.snake_body[-1].pos[1]].block_type != self.BlockTypes.BLANK:
+                        if self.map[self.snake_body[-1].pos[0]+2][self.snake_body[-1].pos[1]].block_type not in [self.BlockTypes.BLANK, self.BlockTypes.CHECKPOINT, self.BlockTypes.END_POINT]:
                             return
                         self.moving_box = self.map[self.snake_body[-1].pos[0]+1][self.snake_body[-1].pos[1]]
+                        self.moving_box.pos = (self.moving_box.pos[0]+1, self.moving_box.pos[1])
                         self.map[self.snake_body[-1].pos[0]+1][self.snake_body[-1].pos[1]] = self.Block(pygame.Surface((0,0)), self.snake_body[-1].pos[0]+1, self.snake_body[-1].pos[1], self.BlockTypes.BLANK)
                     
                     want_head = self.map[self.snake_body[-1].pos[0]+1][self.snake_body[-1].pos[1]]
@@ -482,9 +509,10 @@ class Chessboard:
                 pass
     
     def __log_snake_body(self):
-        logging.debug("\nsnake body:")
-        for block in self.snake_body:
-            logging.debug(f"pos: {block.pos}, type: {block.block_type}, rotate: {block.rotate}")
-        logging.debug("")
+        # logging.debug("\nsnake body:")
+        # for block in self.snake_body:
+        #     logging.debug(f"pos: {block.pos}, type: {block.block_type}, rotate: {block.rotate}")
+        # logging.debug("")
+        pass
 
 chessboard = Chessboard()
