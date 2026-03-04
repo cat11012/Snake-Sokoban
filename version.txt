@@ -1,4 +1,4 @@
 Version: 1.1
-Revision: 000001
-Buildtime: 03-03-2026 23:07:23
+Revision: 000002
+Buildtime: 03-03-2026 23:12:55
 Application-name: Snake Sokoban

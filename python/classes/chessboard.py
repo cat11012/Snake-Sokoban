@@ -204,6 +204,13 @@ class Chessboard:
             for key, value in list(self.checkpoints.items()):
                 if len(value) == 0:
                     self.checkpoints.pop(key)
+            for row in self.map:
+                for block in row:
+                    if block.block_type == self.BlockTypes.BOX:
+                        if block.color not in list(self.checkpoints.keys()):
+                            block.image = box_images[Colors.SILVER_GELATIN]
+                            block.block_type = self.BlockTypes.UNMOVEABLE
+                            block.color = None
 
             self.moving_process += 1
 
