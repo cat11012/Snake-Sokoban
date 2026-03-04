@@ -22,14 +22,15 @@ level_complete_home_rect = home_images['normal'].get_rect(bottomright = (SCREEN_
 # }
 
 forward_images = {
-    'normal':   pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'forward_button_normal.png'))  .convert_alpha(), (SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
-    'hovered':  pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'forward_button_hovered.png')) .convert_alpha(), (SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
-    'clicked':  pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'forward_button_clicked.png')) .convert_alpha(), (SCREEN_HEIGHT/10, SCREEN_HEIGHT/10))
+    'normal':   pygame.image.load(os.path.join(buttons_images_path, 'forward_button_normal.png'))  .convert_alpha(), #(SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
+    'hovered':  pygame.image.load(os.path.join(buttons_images_path, 'forward_button_hovered.png')) .convert_alpha(), #(SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
+    'clicked':  pygame.image.load(os.path.join(buttons_images_path, 'forward_button_clicked.png')) .convert_alpha() #(SCREEN_HEIGHT/10, SCREEN_HEIGHT/10))
 }
 level_select_forward_rect = forward_images['normal'].get_rect(right = SCREEN_WIDTH/35*33, centery = SCREEN_HEIGHT/2)
 level_playing_forward_rect = forward_images['normal'].get_rect(bottomleft = ((SCREEN_WIDTH-SCREEN_HEIGHT/10*3 - SCREEN_HEIGHT/7*5)/2 + SCREEN_HEIGHT/10*1.5, SCREEN_HEIGHT / 7*6))
+level_playing_next_level_rect = forward_images['normal'].get_rect(right = 896, top = 32)
 level_complete_next_level_rect = forward_images['normal'].get_rect(bottomleft = (SCREEN_WIDTH/2+SCREEN_HEIGHT/40, SCREEN_HEIGHT/5*4))
-level_complete_next_level_rect2 = forward_images['normal'].get_rect(centerx = SCREEN_WIDTH/2, bottom = SCREEN_HEIGHT/5*4)
+level_complete_next_level_rect2 = forward_images['normal'].get_rect(centerx = SCREEN_WIDTH/2, top = SCREEN_HEIGHT/5*3)
 
 backward_images = {
     'normal':   pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'backward_button_normal.png'))  .convert_alpha(), (SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
@@ -52,11 +53,12 @@ level_playing_backward_rect = backward_images['normal'].get_rect(bottomleft = ((
 # }
 
 retry_images = {
-    'normal':   pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'retry_button_normal.png'))  .convert_alpha(), (SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
-    'hovered':  pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'retry_button_hovered.png')) .convert_alpha(), (SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
-    'clicked':  pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'retry_button_clicked.png')) .convert_alpha(), (SCREEN_HEIGHT/10, SCREEN_HEIGHT/10))
+    'normal':   pygame.image.load(os.path.join(buttons_images_path, 'retry_button_normal.png'))  .convert_alpha(), #(SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
+    'hovered':  pygame.image.load(os.path.join(buttons_images_path, 'retry_button_hovered.png')) .convert_alpha(), #(SCREEN_HEIGHT/10, SCREEN_HEIGHT/10)),
+    'clicked':  pygame.image.load(os.path.join(buttons_images_path, 'retry_button_clicked.png')) .convert_alpha() #(SCREEN_HEIGHT/10, SCREEN_HEIGHT/10))
 }
 level_playing_retry_rect = retry_images['normal'].get_rect(topleft = ((SCREEN_WIDTH-SCREEN_HEIGHT/10*3 - SCREEN_HEIGHT/7*5)/2 + SCREEN_HEIGHT/10*1.5, SCREEN_HEIGHT / 7))
+level_playing_retry_rect2 = retry_images['normal'].get_rect(left = 43, top = 32)
 
 open_menu_images = {
     'normal':   pygame.transform.smoothscale(pygame.image.load(os.path.join(buttons_images_path, 'open_menu_button_normal.png'))  .convert_alpha(), (SCREEN_HEIGHT/5, SCREEN_HEIGHT/5)),

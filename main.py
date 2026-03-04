@@ -1,8 +1,10 @@
+import logging
+
 import pygame
 
-from python.setting.setting import *
+from python.setting import setting
 from python.classes.button import buttons
-from python.classes.chessboard import chessboard
+import python.classes.chessboard as chessboard_module
 import python.setting.images_and_rects.others as images_rects
 from python.setting.global_enums import InterfaceStatus
 
@@ -13,32 +15,38 @@ def handle_events() -> bool:
             return False
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button down
             for button in buttons:
-                button.mouse_click(pygame.mouse.get_pos(), interface_status)
+                button.mouse_click(pygame.mouse.get_pos(), setting.interface_status)
         if event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # Left mouse button up
             for button in buttons:
-                button.mouse_release(pygame.mouse.get_pos(), interface_status)
+                button.mouse_release(pygame.mouse.get_pos(), setting.interface_status)
         if event.type == pygame.KEYDOWN:
-            if interface_status == InterfaceStatus.GAMEPLAY:
-                chessboard.key_press(event.key)
+            if setting.interface_status == InterfaceStatus.GAMEPLAY:
+                chessboard_module.chessboard.key_press(event.key)
         if event.type == pygame.KEYUP:
-            if interface_status == InterfaceStatus.GAMEPLAY:
-                chessboard.key_release(event.key)
+            if setting.interface_status == InterfaceStatus.GAMEPLAY:
+                chessboard_module.chessboard.key_release(event.key)
     return True
 
 def update() -> None:
-    buttons.update(pygame.mouse.get_pos(), interface_status)
-    if interface_status == InterfaceStatus.GAMEPLAY:
-        chessboard.update()
+    # logging.debug(f"interface status: {setting.interface_status}")
+
+    buttons.update(pygame.mouse.get_pos(), setting.interface_status)
+    if setting.interface_status == InterfaceStatus.GAMEPLAY:
+        chessboard_module.chessboard.update()
 
 def draw() -> None:
-    if interface_status == InterfaceStatus.LOBBY:
-        screen.blit(images_rects.background_image, images_rects.background_rect)
-        screen.blit(images_rects.title_image, images_rects.title_rect)
-    elif interface_status == InterfaceStatus.GAMEPLAY:
-        screen.blit(chessboard.image, chessboard.rect)
+    setting.screen.fill("#21941f") 
+
+    if setting.interface_status == InterfaceStatus.LOBBY:
+        setting.screen.blit(images_rects.background_image, images_rects.background_rect)
+        setting.screen.blit(images_rects.title_image, images_rects.title_rect)
+    if setting.interface_status in [InterfaceStatus.GAMEPLAY, InterfaceStatus.LEVEL_COMPLETE]:
+        setting.screen.blit(chessboard_module.chessboard.image, chessboard_module.chessboard.rect)
+    if setting.interface_status == InterfaceStatus.LEVEL_COMPLETE:
+        setting.screen.blit(images_rects.level_complete_image, images_rects.level_complete_rect)
 
     for button in buttons:
-        button.draw(screen)
+        button.draw(setting.screen)
 
 def main():
     running = True
@@ -47,7 +55,7 @@ def main():
         update()
         draw()
         pygame.display.flip()
-        clock.tick(60)
+        setting.clock.tick(60)
     
     pygame.quit()
 

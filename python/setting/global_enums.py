@@ -25,4 +25,5 @@ class InterfaceStatus(Enum):
     LEVEL_SELECTION = "level_selection"
     GAMEPLAY = "gameplay"
     LEVEL_COMPLETE = "level_complete"
+    NONE = "none"
 
